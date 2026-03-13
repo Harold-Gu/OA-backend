@@ -258,3 +258,4 @@ class TestCeleryView(APIView):
         # Execute the "debug_task" task asynchronously using Celery.
         debug_task.delay()
         return Response({"detail": "succeed!"})
+

@@ -3,6 +3,7 @@ from . import views
 from rest_framework.urls import  path
 
 
+
 app_name = "inform"
 
 router = DefaultRouter(trailing_slash=False)

@@ -10,6 +10,7 @@ router = DefaultRouter(trailing_slash=False)
 # http://localhost:8000/absent/absent
 router.register('absent', views.AbsentViewSet, basename='absent')
 
+
 urlpatterns = [
     # http://localhost:8000/absent/type
     path('type', views.AbsentTypeView.as_view(), name='absenttypes'),
