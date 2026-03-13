@@ -13,11 +13,11 @@ class AddStaffSerializer(serializers.Serializer):
     def validate(self, attrs):
         request = self.context['request']
         email = attrs.get('email')
-        # 1. 验证该电子邮件地址的存在性
+
         if OAUser.objects.filter(email=email).exists():
             raise serializers.ValidationError('This email address is already in use!')
 
-        # 2. 验证当前用户是否是部门的leader
+
         if request.user.department.leader.uid != request.user.uid:
             raise serializers.ValidationError('Non-department leaders are not allowed to add employees!')
         return attrs

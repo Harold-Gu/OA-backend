@@ -67,7 +67,7 @@
                 alert("Please enter a password of at least 6 characters!")
                 return;
             }
-            $.post("/staff/active", {email, password}, function (result){
+            $.post("/staff/active/", {email, password}, function (result){
                 if(result.code == 200){
                     alert("Activation successful!")
                     window.location = "/"

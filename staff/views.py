@@ -106,7 +106,6 @@ class StaffViewSet(
         else:
             return AddStaffSerializer
 
-    # 获取员工列表
     def get_queryset(self):
         department_id = self.request.query_params.get('department_id')
         realname = self.request.query_params.get('realname')
@@ -118,7 +117,7 @@ class StaffViewSet(
         # 2. If it is not the board but is the leader of a department, then return the employees of that department
         # 3. If it is neither the board nor the leader of a department, then throw a 403 Forbidden error
         user = self.request.user
-        if user.department.name != 'Board Department':
+        if user.department.name != "Board Department":
             if user.uid != user.department.leader.uid:
                 raise exceptions.PermissionDenied()
             else:
