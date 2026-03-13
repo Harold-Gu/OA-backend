@@ -21,12 +21,12 @@ from django.conf import settings
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('api/auth/', include('apps.oaauth.urls')),
-    path('api/absent/', include('apps.absent.urls')),
-    path('api/inform/', include('apps.inform.urls')),
-    path('api/staff/', include('apps.staff.urls')),
-    path('api/image/', include('apps.image.urls')),
-    path('api/home/', include('apps.home.urls'))
+    path('auth/', include('oaauth.urls')),
+    path('absent/', include('absent.urls')),
+    path('inform/', include('inform.urls')),
+    path('staff/', include('staff.urls')),
+    path('image/', include('image.urls')),
+    path('home/', include('home.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # http://127.0.0.1:8000/media/dVyvKcdihzUmjosnQaYUWM.jpeg

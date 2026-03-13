@@ -18,6 +18,9 @@ env = environ.Env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Read the .env file, and create a file on the root path of the server project.
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -93,13 +96,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         "NAME": env.str('DB_NAME', 'oa'),
-        "USER": env.str('DB_USER', "root"),
-        "PASSWORD": env.str("DB_PASSWORD", "root"),
+        "USER": env.str('DB_USER', 'root'),
+        "PASSWORD": env.str('DB_PASSWORD', '!Ghr116190307'),
         "HOST": env.str('DB_HOST', 'localhost'),
         "PORT": env.str('DB_PORT', 3306),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -210,7 +212,8 @@ LOGGING = {
        'file': {
            'level': 'DEBUG',
            'class': 'logging.FileHandler',
-           'filename': '/data/log/oa.log',
+           # Here, the logs folder under the project has been changed to be dynamically obtained!
+           'filename': os.path.join(LOG_DIR, 'oa.log'),
            'formatter': 'verbose'
        },
     },
