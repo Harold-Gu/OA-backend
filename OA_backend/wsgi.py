@@ -1,17 +1,16 @@
 """
-WSGI config for OA_backend project.
+WSGI config for oaback project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
-
 For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
+https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'OA_backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'oaback.settings')
 
 application = get_wsgi_application()
