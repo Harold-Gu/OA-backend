@@ -21,11 +21,15 @@ class LatestInformView(APIView):
     """
     Return the latest 10 notifications
     """
-    @method_decorator(cache_page(60 * 15))
     def get(self, request):
         current_user = request.user
-        # Return the public notifications, or those that can be seen by my department.
-        informs = Inform.objects.prefetch_related(Prefetch("reads", queryset=InformRead.objects.filter(user_id=current_user.uid)), 'departments').filter(Q(public=True) | Q(departments=current_user.department))[:10]
+        informs = Inform.objects.prefetch_related(
+            Prefetch("reads", queryset=InformRead.objects.filter(user_id=current_user.uid)),
+            'departments'
+        ).filter(
+            Q(public=True) | Q(departments=current_user.department) | Q(author=current_user)
+        ).distinct().order_by('-create_time')[:10]
+
         serializer = InformSerializer(informs, many=True)
         return Response(serializer.data)
 
