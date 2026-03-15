@@ -226,3 +226,14 @@ LOGGING = {
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+# ======== 邮件配置 (QQ邮箱 SMTP 真实发送模式) ========
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+
+
+EMAIL_HOST_USER = '840847902@qq.com'
+EMAIL_HOST_PASSWORD = 'zrwfqsqyqqgjbbjj'
+DEFAULT_FROM_EMAIL = 'OA System <840847902@qq.com>'

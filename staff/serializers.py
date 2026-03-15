@@ -9,6 +9,7 @@ class AddStaffSerializer(serializers.Serializer):
     realname = serializers.CharField(max_length=20, error_messages={"required": "Please enter your username!"})
     email = serializers.EmailField(error_messages={"required": "Please enter your email address!", 'invalid': 'Please enter the correct format of the email address!'})
     password = serializers.CharField(max_length=20, error_messages={"required": 'enter your password'})
+    department_id = serializers.IntegerField(required=False)
 
     def validate(self, attrs):
         request = self.context['request']
@@ -18,7 +19,7 @@ class AddStaffSerializer(serializers.Serializer):
             raise serializers.ValidationError('This email address is already in use!')
 
 
-        if request.user.department.leader.uid != request.user.uid:
+        if request.user.department.name != 'Board Department' and request.user.department.leader.uid != request.user.uid:
             raise serializers.ValidationError('Non-department leaders are not allowed to add employees!')
         return attrs
 

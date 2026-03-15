@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import OAUser,UserStatusChoices,OADepartment
+from .models import OAUser, UserStatusChoices, OADepartment
 from rest_framework import exceptions
 
 
@@ -21,15 +21,23 @@ class LoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError("This user is inactive.")
             elif user.status == UserStatusChoices.LOCKED:
                 raise serializers.ValidationError("This user is locked.")
-            #In order to reduce the number of times SQL statements are executed,Put 'user' directly into 'attrs'
+            # In order to reduce the number of times SQL statements are executed,Put 'user' directly into 'attrs'
             attrs['user'] = user
-
 
         else:
             raise serializers.ValidationError("Please enter your email and password")
         return attrs
 
+
+class LeaderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OAUser
+        fields = ['uid', 'realname', 'email']
+
+
 class DepartmentSerializer(serializers.ModelSerializer):
+    leader = LeaderSerializer(read_only=True)
+
     class Meta:
         model = OADepartment
         fields = '__all__'
@@ -37,9 +45,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     department = DepartmentSerializer()
+
     class Meta:
         model = OAUser
-        exclude = ('password',"groups",'user_permissions')
+        exclude = ('password', "groups", 'user_permissions')
+
 
 class ResetPwdSerializer(serializers.Serializer):
     oldpwd = serializers.CharField(min_length=6, max_length=20)
