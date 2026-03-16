@@ -3,7 +3,7 @@ from inform.models import Inform, InformRead
 from inform.serializers import InformSerializer
 from django.db.models import Q
 from django.db.models import Prefetch
-from rest_framework. response import Response
+from rest_framework.response import Response
 from absent.models import Absent
 from absent.serializers import AbsentSerializer
 from oaauth.models import OADepartment
@@ -36,21 +36,19 @@ class LatestInformView(APIView):
 
 class LatestAbsentView(APIView):
 
-    @method_decorator(cache_page(60 * 15))
     def get(self, request):
         # Members of the board can view the attendance information of all employees, while non-board members can only see the attendance information of their own departments.
         current_user = request.user
-        queryset = Absent.objects
+        queryset = Absent.objects.all()
         if current_user.department.name != 'Board Department':
             queryset = queryset.filter(requester__department_id=current_user.department_id)
-        queryset = queryset.all()[:10]
+        queryset = queryset.order_by('-pk')[:10]
         serializer = AbsentSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
 class DepartmentStaffCountView(APIView):
 
-    @method_decorator(cache_page(60 * 15))
     def get(self, request):
         rows = OADepartment.objects.annotate(staff_count=Count("staffs")).values("name", "staff_count")
         # print(rows)
