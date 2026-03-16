@@ -28,8 +28,6 @@ import pandas as pd
 from django.http.response import HttpResponse
 from django.db import transaction
 
-
-
 OAUser = get_user_model()
 
 aes = aeser.AESCipher(settings.SECRET_KEY)
@@ -147,10 +145,21 @@ class StaffViewSet(
             realname = serializer.validated_data['realname']
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
+            department_id = serializer.validated_data.get('department_id')
 
             # 1. Save user data
             user = OAUser.objects.create_user(email=email, realname=realname, password=password)
-            department = request.user.department
+            current_user = request.user
+
+            if current_user.department.name == "Board Department" and department_id:
+                from oaauth.models import OADepartment
+                department = OADepartment.objects.filter(pk=department_id).first()
+                if not department:
+                    return Response(data={'detail': 'The selected department does not exist!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                department = current_user.department
+
             user.department = department
             user.save()
 
@@ -164,8 +173,6 @@ class StaffViewSet(
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
-
-
 
 
 class StaffDownloadView(APIView):
@@ -191,7 +198,8 @@ class StaffDownloadView(APIView):
             result = queryset.values("realname", "email", "department__name", 'date_joined', 'status')
             staff_df = pd.DataFrame(list(result))
             staff_df = staff_df.rename(
-                columns={"realname": "name", "email": 'email', 'department__name': 'department name', "date_joined": 'joined date',
+                columns={"realname": "name", "email": 'email', 'department__name': 'department name',
+                         "date_joined": 'joined date',
                          'status': 'status'})
             response = HttpResponse(content_type='application/xlsx')
             response['Content-Disposition'] = "attachment; filename=staff's information.xlsx"
@@ -211,7 +219,8 @@ class StaffUploadView(APIView):
             file = serializer.validated_data.get('file')
             current_user = request.user
             if current_user.department.name != 'Board Department' or current_user.department.leader_id != current_user.uid:
-                return Response({"detail": "You do not have the permission to access!"}, status=status.HTTP_403_FORBIDDEN)
+                return Response({"detail": "You do not have the permission to access!"},
+                                status=status.HTTP_403_FORBIDDEN)
 
             staff_df = pd.read_excel(file)
             users = []
@@ -223,19 +232,24 @@ class StaffUploadView(APIView):
                     try:
                         department = OADepartment.objects.filter(name=row['department']).first()
                         if not department:
-                            return Response({"detail": f"{row['department']}inexistence！"}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({"detail": f"{row['department']}inexistence！"},
+                                            status=status.HTTP_400_BAD_REQUEST)
                     except Exception as e:
-                        return Response({"detail": "The department list does not exist!"}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"detail": "The department list does not exist!"},
+                                        status=status.HTTP_400_BAD_REQUEST)
 
                 try:
                     email = row['email']
                     realname = row['name']
                     password = "111111"
-                    user = OAUser(email=email, realname=realname, department=department, status=UserStatusChoices.UNACTIVE)
+                    user = OAUser(email=email, realname=realname, department=department,
+                                  status=UserStatusChoices.UNACTIVE)
                     user.set_password(password)
                     users.append(user)
                 except Exception:
-                    return Response({"detail": "Please check the email addresses, names and department names in the document!"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"detail": "Please check the email addresses, names and department names in the document!"},
+                        status=status.HTTP_400_BAD_REQUEST)
             try:
                 # Atomic operation (transaction)
                 with transaction.atomic():
@@ -252,9 +266,9 @@ class StaffUploadView(APIView):
             detail = list(serializer.errors.values())[0][0]
             return Response({"detail": detail}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class TestCeleryView(APIView):
     def get(self, request):
         # Execute the "debug_task" task asynchronously using Celery.
         debug_task.delay()
         return Response({"detail": "succeed!"})
-
