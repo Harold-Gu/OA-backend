@@ -230,5 +230,9 @@ LOGGING = {
         },
     },
 }
-
+ALLOWED_HOSTS = [
+    'oa-backend-j4mi.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
