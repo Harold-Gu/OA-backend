@@ -27,12 +27,12 @@ if not os.path.exists(LOG_DIR):
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wqbx1opd_k1!s(0o*aos%ons@$x#qkqv5q**t35p*@1$8*sd^f'
+SECRET_KEY = env.str('SECRET_KEY', 'django-insecure-wqbx1opd_k1!s(0o*aos%ons@$x#qkqv5q**t35p*@1$8*sd^f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env.bool('DEBUG', False)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=["*"])
 
 
 # Application definition
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     # 'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
@@ -99,7 +100,11 @@ DATABASES = {
         "USER": env.str('DB_USER', 'root'),
         "PASSWORD": env.str('DB_PASSWORD', '!Ghr116190307'),
         "HOST": env.str('DB_HOST', 'localhost'),
-        "PORT": env.str('DB_PORT', 3306),
+        "PORT": env.int('DB_PORT', 3306),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'ssl': {'ca': '/etc/ssl/certs/ca-certificates.crt'} if not env.bool('DEBUG', False) else env.dict('DB_SSL', default={})
+        },
     }
 }
 
@@ -141,6 +146,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_ROOT = BASE_DIR / 'media'
 # http://127.0.0.1:8000/media/abc.png
@@ -170,11 +176,11 @@ APPEND_SLASH=False
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'guhaoran1216@gmail.com'
-EMAIL_HOST_PASSWORD = 'taeqetcfhrsxdajh'
-DEFAULT_FROM_EMAIL = 'guhaoran1216@gmail.com'
+EMAIL_HOST = env.str('EMAIL_HOST', 'smtp.qq.com')
+EMAIL_PORT = env.int('EMAIL_PORT', 587)
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '840847902@qq.com')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', 'zrwfqsqyqqgjbbjj')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', 'OA System <840847902@qq.com>')
 
 # CELERY related configuration
 # Configuration of the intermediary
@@ -226,14 +232,3 @@ LOGGING = {
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
-
-# ======== 邮件配置 (QQ邮箱 SMTP 真实发送模式) ========
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-
-
-EMAIL_HOST_USER = '840847902@qq.com'
-EMAIL_HOST_PASSWORD = 'zrwfqsqyqqgjbbjj'
-DEFAULT_FROM_EMAIL = 'OA System <840847902@qq.com>'

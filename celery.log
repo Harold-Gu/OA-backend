@@ -1,0 +1,8 @@
+2026-03-13 02:26:42,594 - celery.worker.consumer.connection - INFO - Connected to redis://127.0.0.1:6379/1
+2026-03-13 02:26:42,597 - celery.worker.consumer.mingle - INFO - mingle: searching for neighbors
+2026-03-13 02:26:43,705 - celery.worker.consumer.mingle - INFO - mingle: all alone
+2026-03-13 04:05:04,027 - celery.worker.strategy - INFO - Task send_mail_task[a22bf8be-b820-4d9e-9272-80c08c4b4b9e] received
+2026-03-15 14:16:25,397 - celery.worker.consumer.connection - INFO - Connected to redis://127.0.0.1:6379/1
+2026-03-15 14:16:25,401 - celery.worker.consumer.mingle - INFO - mingle: searching for neighbors
+2026-03-15 14:16:26,415 - celery.worker.consumer.mingle - INFO - mingle: all alone
+2026-03-15 14:40:09,028 - celery.worker.strategy - INFO - Task send_mail_task[dc0a3468-59ea-495e-a679-fa73acac3802] received

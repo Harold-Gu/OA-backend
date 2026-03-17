@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 
 OAUser = get_user_model()
 
@@ -8,7 +8,7 @@ OAUser = get_user_model()
 class AddStaffSerializer(serializers.Serializer):
     realname = serializers.CharField(max_length=20, error_messages={"required": "Please enter your username!"})
     email = serializers.EmailField(error_messages={"required": "Please enter your email address!", 'invalid': 'Please enter the correct format of the email address!'})
-    password = serializers.CharField(max_length=20, error_messages={"required": 'enter your password'})
+    password = serializers.CharField(max_length=20, min_length=6, validators=[RegexValidator(regex=r'^[a-zA-Z0-9]{6,20}$', message='Password must be 6-20 characters long and contain only letters and numbers.')], error_messages={"required": 'enter your password'})
     department_id = serializers.IntegerField(required=False, allow_null=True)
 
     def validate(self, attrs):
